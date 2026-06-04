@@ -1,0 +1,691 @@
+{
+  "info": {
+    "_postman_id": "c22d81da-bb92-4b12-8593-4a3ed2dd844a",
+    "name": "department-tree",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "44211229",
+    "_collection_link": "https://go.postman.co/collection/44211229-c22d81da-bb92-4b12-8593-4a3ed2dd844a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "建立節點(WPG)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "WPG",
+            "type": "text"
+          },
+          {
+            "key": "X-User-Id",
+            "value": "nick.gh.zhang@example.com",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"id\": \"100\",\r\n  \"parentId\": null,\r\n  \"code\": \"A\",\r\n  \"name\": \"Dept A\"\r\n}\r\n// // B under A\r\n// {\r\n//     \"id\": \"200\",\r\n//     \"parentId\": \"100\",\r\n//     \"code\": \"B\",\r\n//     \"name\": \"Dept B\"\r\n// }\r\n// // C under A\r\n// {\r\n//   \"id\": \"300\",\r\n//   \"parentId\": \"100\",\r\n//   \"code\": \"C\",\r\n//   \"name\": \"Dept C\"\r\n// }\r\n// // D under B\r\n// {\r\n//   \"id\": \"400\",\r\n//   \"parentId\": \"200\",\r\n//   \"code\": \"D\",\r\n//   \"name\": \"Dept D\"\r\n// }\r\n// // C1 under A\r\n// {\r\n//   \"id\": \"301\",\r\n//   \"parentId\": \"100\",\r\n//   \"code\": \"C1\",\r\n//   \"name\": \"Dept C1\"\r\n// }\r\n// // E under B\r\n// {\r\n//   \"id\": \"500\",\r\n//   \"parentId\": \"200\",\r\n//   \"code\": \"E\",\r\n//   \"name\": \"Dept E\"\r\n// }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/departments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "建立樹(WPG)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "WPG",
+            "type": "text"
+          },
+          {
+            "key": "X-User-Id",
+            "value": "nick.gh.zhang@example.com",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"id\": \"100\",\r\n    \"parentId\": null,\r\n    \"code\": \"A\",\r\n    \"name\": \"Dept A\",\r\n    \"children\": [\r\n        {\r\n            \"id\": \"200\",\r\n            \"parentId\": \"100\",\r\n            \"code\": \"B\",\r\n            \"name\": \"Dept B\",\r\n            \"children\": [\r\n                {\r\n                    \"id\": \"400\",\r\n                    \"parentId\": \"200\",\r\n                    \"code\": \"D\",\r\n                    \"name\": \"Dept D\",\r\n                    \"children\": []\r\n                },\r\n                {\r\n                    \"id\": \"500\",\r\n                    \"parentId\": \"200\",\r\n                    \"code\": \"E\",\r\n                    \"name\": \"Dept E\",\r\n                    \"children\": []\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"id\": \"300\",\r\n            \"parentId\": \"100\",\r\n            \"code\": \"C\",\r\n            \"name\": \"Dept C\",\r\n            \"children\": []\r\n        },\r\n        {\r\n            \"id\": \"301\",\r\n            \"parentId\": \"100\",\r\n            \"code\": \"C1\",\r\n            \"name\": \"Dept C1\",\r\n            \"children\": []\r\n        }\r\n    ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/departments/tree",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "tree"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "建立節點 (Delta)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "Delta",
+            "type": "text"
+          },
+          {
+            "key": "X-User-Id",
+            "value": "nick.gh.zhang@example.com",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "// {\r\n//   \"id\": \"101\",\r\n//   \"parentId\": null,\r\n//   \"code\": \"A\",\r\n//   \"name\": \"Dept A\"\r\n// }\r\n// B under A\r\n// {\r\n//     \"id\": \"201\",\r\n//     \"parentId\": \"101\",\r\n//     \"code\": \"B\",\r\n//     \"name\": \"Dept B\"\r\n// }\r\n// // C under A\r\n// {\r\n//   \"id\": \"300\",\r\n//   \"parentId\": \"100\",\r\n//   \"code\": \"C\",\r\n//   \"name\": \"Dept C\"\r\n// }\r\n// // D under B\r\n// {\r\n//   \"id\": \"400\",\r\n//   \"parentId\": \"200\",\r\n//   \"code\": \"D\",\r\n//   \"name\": \"Dept D\"\r\n// }\r\n// C1 under A\r\n// {\r\n//   \"id\": \"301\",\r\n//   \"parentId\": \"100\",\r\n//   \"code\": \"C1\",\r\n//   \"name\": \"Dept C1\"\r\n// }\r\n// // E under B\r\n// {\r\n//   \"id\": \"500\",\r\n//   \"parentId\": \"200\",\r\n//   \"code\": \"E\",\r\n//   \"name\": \"Dept E\"\r\n// }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/departments",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "移動節點 (把 C 移到 B 底下)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "WPG",
+            "type": "text"
+          },
+          {
+            "key": "X-User-Id",
+            "value": "nick.gh.zhang@example.com",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "// 100 (A)\r\n// ├── 200 (B)\r\n// │   └── 400 (D)\r\n// └── 300 (C)\r\n// 把 C 移到 B 底下\r\n{\r\n    \"departmentId\": \"300\",\r\n    \"newParentId\": \"200\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/departments/move",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "move"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "移動節點",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "WPG",
+            "type": "text"
+          },
+          {
+            "key": "X-User-Id",
+            "value": "nick.gh.zhang@example.com",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "// 100 (A)\r\n// ├── 200 (B)\r\n// │   └── 400 (D)\r\n// └── 300 (C)\r\n// 把整個 B 移到 C 底下\r\n{\r\n    \"tenantId\": \"WPG\",\r\n    \"departmentId\": \"200\",\r\n    \"newParentId\": \"300\",\r\n    \"operator\": \"tester\"\r\n}\r\n// // 把整個 C 移到 C1 底下\r\n// {\r\n//     \"tenantId\": \"WPG\",\r\n//     \"departmentId\": \"300\",\r\n//     \"newParentId\": \"301\",\r\n//     \"operator\": \"tester\"\r\n// }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/departments/move",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "move"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "復原已刪除的部門",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "WPG",
+            "type": "text"
+          },
+          {
+            "key": "X-User-Id",
+            "value": "nick.gh.zhang@example.com",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/departments/200/restore",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "200",
+            "restore"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "部門重新命名",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "WPG",
+            "type": "text"
+          },
+          {
+            "key": "X-User-Id",
+            "value": "nick.gh.zhang@example.com",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\":\"大聯大控股\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/departments/100/name",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "100",
+            "name"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "停用部門",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "WPG",
+            "type": "text"
+          },
+          {
+            "key": "X-User-Id",
+            "value": "nick.gh.zhang@example.com",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/departments/100/disable",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "100",
+            "disable"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "調整部門排序權重(越小越前面)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "WPG",
+            "type": "text"
+          },
+          {
+            "key": "X-User-Id",
+            "value": "nick.gh.zhang@example.com",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"sortOrder\":20\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/departments/300/sort-order",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "300",
+            "sort-order"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "刪除部門",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-User-Id",
+            "value": "nick.gh.zhang@example.com",
+            "type": "text"
+          },
+          {
+            "key": "X-Tenant-Id",
+            "value": "WPG",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/departments/200",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "200"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "取得事件稽核軌跡 (Audit Log)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/departments/WPG/100/events",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "WPG",
+            "100",
+            "events"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "時光機查詢 - 還原到指定時間點的狀態",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/departments/WPG/100/state/at?timestamp=2026-06-02T16:10:02.880056Z",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "WPG",
+            "100",
+            "state",
+            "at"
+          ],
+          "query": [
+            {
+              "key": "timestamp",
+              "value": "2026-06-02T16:10:02.880056Z"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "取得最新狀態 (透過事件溯源重建)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/departments/WPG/100/state/current",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "WPG",
+            "100",
+            "state",
+            "current"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "取得樹狀節點",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "// {\r\n//   \"id\": 100,\r\n//   \"parentId\": null,\r\n//   \"code\": \"A\",\r\n//   \"name\": \"Dept A\",\r\n//   \"operator\": \"system\"\r\n// }\r\n\r\n// {\r\n//   \"id\": 200,\r\n//   \"parentId\": 100,\r\n//   \"code\": \"B\",\r\n//   \"name\": \"Dept B\",\r\n//   \"operator\": \"system\"\r\n// }\r\n\r\n// {\r\n//   \"id\": 300,\r\n//   \"parentId\": 100,\r\n//   \"code\": \"C\",\r\n//   \"name\": \"Dept C\",\r\n//   \"operator\": \"system\"\r\n// }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/departments/WPG/100/tree",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "WPG",
+            "100",
+            "tree"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "取得麵包屑",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/departments/WPG/400/breadcrumbs",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "WPG",
+            "400",
+            "breadcrumbs"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "模糊搜尋部門",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/departments/WPG/search?keyword=C",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "WPG",
+            "search"
+          ],
+          "query": [
+            {
+              "key": "keyword",
+              "value": "C"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Json Format",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"tenantId\": \"WPG\",\r\n    \"departmentId\": \"301\",\r\n    \"operator\": \"nick.gh.zhang@example.com\",\r\n    \"eventId\": \"faa5bee7-a344-4504-872a-4b3ee90b1b25\",\r\n    \"occurredAt\": \"2026-05-29T02:25:15.524555800Z\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/departments/WPG/search?keyword=C",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "WPG",
+            "search"
+          ],
+          "query": [
+            {
+              "key": "keyword",
+              "value": "C"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "分配員工到部門",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "WPG",
+            "type": "text"
+          },
+          {
+            "key": "X-User-Id",
+            "value": "nick.gh.zhang@example.com",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"employeeId\": \"107054\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/departments/300/employees",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "300",
+            "employees"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "觸發全系統讀取端重建 (Full Projection Rebuild)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "X-Admin-Token",
+            "value": "SYS-REBUILD-999",
+            "type": "text"
+          },
+          {
+            "key": "X-User-Id",
+            "value": "nick.gh.zhang@example.com",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/admin/system/projections/rebuild",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "v1",
+            "admin",
+            "system",
+            "projections",
+            "rebuild"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "從部門移除員工",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-Tenant-Id",
+            "value": "WPG",
+            "type": "text"
+          },
+          {
+            "key": "X-User-Id",
+            "value": "nick.gh.zhang@example.com",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/departments/300/employees/107054",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "departments",
+            "300",
+            "employees",
+            "107054"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
