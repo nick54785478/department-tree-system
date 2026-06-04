@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>dept-tree-module</artifactId>
+	<artifactId>department-tree-system</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>dept-tree-module</name>
+	<name>department-tree-system</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>

@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DeptTreeModuleApplication {
+public class DepartmentTreeApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DeptTreeModuleApplication.class, args);
+		SpringApplication.run(DepartmentTreeApplication.class, args);
 	}
 
 }
