@@ -35,7 +35,7 @@
 
 ## 技術堆疊 (Tech Stack)
 >* Language: Java 17 / 21
->* Framework: Spring Boot 3.x
+>* Framework: Spring Boot 4.0.6
 >* Data Access (Write Side): Spring Data JPA / Hibernate (Driven by Domain Events)
 >* Data Access (Query Side / Topology): Spring JDBC / Native SQL (Closure Table)
 >* Event Serialization: Jackson Object Mapper (Polymorphic Deserialization)
