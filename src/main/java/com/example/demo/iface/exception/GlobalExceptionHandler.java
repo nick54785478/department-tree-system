@@ -24,6 +24,11 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.OK).body(new BaseExceptionResponse("DOMAIN_EXCEPTION", e.getMessage()));
 	}
 
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<BaseExceptionResponse> handleIllegalArgumentException(IllegalArgumentException e) {
+		return ResponseEntity.status(HttpStatus.OK).body(new BaseExceptionResponse("ILLEGAL_ARGUMENT", e.getMessage()));
+	}
+
 	/**
 	 * 回傳訊息定義
 	 */

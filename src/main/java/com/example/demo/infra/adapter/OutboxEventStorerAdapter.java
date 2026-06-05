@@ -12,14 +12,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Outbox Event Storer Adapter (Infrastructure Layer)
  *
- * <p>
+ * <pre>
  * 將領域事件轉化為 Outbox (發件匣) 實體並寫入資料庫的具體實作。
  * 
- * <strong>架構約定</strong>： 此方法通常配合 @TransactionalEventListener(phase =
- * TransactionPhase.BEFORE_COMMIT) 使用。 確保「領域事件 Payload 寫入 Outbox 表」與「Aggregate
- * 狀態變更」在同一個資料庫 Transaction 中完成， 達成完美的 Local Transaction 保證遞交 (Guaranteed
- * Delivery) 基礎。
- * </p>
+ * <strong>架構約定</strong>： 此方法通常配合 @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT) 使用。 
+ * 確保「領域事件 Payload 寫入 Outbox 表」與「Aggregate 狀態變更」在同一個資料庫 Transaction 中完成， 
+ * 達成完美的 Local Transaction 保證遞交 (Guaranteed Delivery) 基礎。
+ * </pre>
  */
 @Component
 @RequiredArgsConstructor

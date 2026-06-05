@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.DepartmentQueryService;
-import com.example.demo.iface.dto.res.DepartmentTreeGottenResource;
 import com.example.demo.iface.dto.res.DepartmentsSearchedResource;
 import com.example.demo.iface.dto.res.FlatDepartmentsGottenResource;
 import com.example.demo.infra.shared.dto.DepartmentFlatNodeGottenView;
@@ -35,7 +34,9 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/departments")
 public class DepartmentQueryController {
 
-	/** 注入專注唯讀端組裝與排序的查詢應用服務 */
+	/**
+	 * 注入專注唯讀端組裝與排序的查詢應用服務
+	 */
 	private final DepartmentQueryService queryService;
 
 	/**
@@ -53,10 +54,13 @@ public class DepartmentQueryController {
 	 * @return 夾帶多層級巢狀 DTO 結構的樹狀表現層資源
 	 */
 	@GetMapping("/{tenantId}/{id}/tree")
-	public ResponseEntity<DepartmentTreeGottenResource> getTree(@PathVariable String tenantId,
-			@PathVariable String id) {
-		DepartmentTreeNodeGottenView data = queryService.getTree(tenantId, id);
-		return ResponseEntity.ok(new DepartmentTreeGottenResource("200", "Success", data));
+	public ResponseEntity<DepartmentTreeNodeGottenView> getTree(@PathVariable String tenantId, @PathVariable String id,
+			@RequestParam(required = false, defaultValue = "false") boolean includeDisabled) {
+
+		// 🌟 將 Flag 往下傳遞給 Application Service
+		DepartmentTreeNodeGottenView tree = queryService.getTree(tenantId, id, includeDisabled);
+
+		return ResponseEntity.ok(tree);
 	}
 
 	/**

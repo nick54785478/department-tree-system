@@ -29,14 +29,19 @@ import lombok.NoArgsConstructor;
 public class ProcessedEvent {
 
 	/**
-	 * 領域事件的唯一識別碼。 💡 設計擴充提醒：在多重投影機 (Multiple Projectors) 併發消費同一個事件的場景下，
+	 * 領域事件的唯一識別碼。
+	 * <p>
+	 * 設計擴充提醒：在多重投影機 (Multiple Projectors) 併發消費同一個事件的場景下，
+	 * </p>
 	 * 此處可延伸儲存為「{@code ProjectorName_EventID}」的複合加工識別 Key，實現精確到處理器層級的冪等控制。
 	 */
 	@Id
 	@Column(name = "event_id", length = 128, nullable = false, updatable = false)
 	private String eventId;
 
-	/** 該領域事件首次被成功消費並 Commit 的系統時間，主要用於大批量重播時的稽核與清理 */
+	/**
+	 * 該領域事件首次被成功消費並 Commit 的系統時間，主要用於大批量重播時的稽核與清理
+	 */
 	@Column(name = "processed_at", nullable = false, updatable = false)
 	private Instant processedAt;
 

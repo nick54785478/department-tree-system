@@ -12,7 +12,7 @@ import com.example.demo.application.domain.shared.event.DomainEvent;
  * 專責維護、管理「事件名稱字串 (String)」與「具體 Java 類別 (Class)」之間的執行期雙向對應關係。
  *
  * <b>系統底層底座核心定位</b>： 當異步排程器（如 Outbox Processor 或 Event Store Rehydration）從資料庫歷史表中撈出一筆 平坦的文字紀錄時，
- * 它只會拿到 {@code event_type = 'DepartmentRestoredEvent'} 與 {@code payload = '{...}'}。 
+ * 它只會拿到 event_type = 'DepartmentRestoredEvent' 與 payload = '{...}'。 
  * 此時，底層基礎設施必須拿著 'DepartmentRestoredEvent' 字串，前來向本註冊表換取真實的 {@link DepartmentRestoredEvent.class}，
  * 才能交給 Jackson 反序列化出正確的充血實體。
  *
@@ -29,9 +29,10 @@ public class DomainEventRegistry {
 
 	/**
 	 * 透過系統組態設定（{@code OutboxConfiguration}）在啟動時注入。
-	 * <p>
+	 * 
+	 * <pre>
 	 * 使用 Java 9+ 的 {@link Map#copyOf} 進行深度複製與防禦性封裝，徹底杜絕運行期被不當外部代碼篡改路由規則的風險。
-	 * </p>
+	 * </pre>
 	 *
 	 * @param registryMap 啟動階段由 Classpath 掃描引擎（如 AssignableTypeFilter）自動搜集完畢的事件對應矩陣
 	 */

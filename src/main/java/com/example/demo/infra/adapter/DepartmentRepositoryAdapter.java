@@ -17,10 +17,10 @@ import lombok.RequiredArgsConstructor;
 /**
  * Department Repository Adapter (Infrastructure Layer)
  *
- * <p>
+ * <pre>
  * 實作 Domain Layer 的 {@link DepartmentRepositoryPort} 介面。 負責將領域層的 Aggregate
  * 請求轉發給底層的 JPA Persistence。 本層不應包含業務邏輯，僅負責資料轉換與持久化。
- * </p>
+ * </pre>
  */
 @Component
 @RequiredArgsConstructor

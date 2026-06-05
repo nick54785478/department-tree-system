@@ -22,12 +22,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Event Store Adapter (Infrastructure Layer)
  *
- * <p>
+ * <pre>
  * 負責事件流 (Event Stream) 與快照 (Snapshot) 的物理持久化實作。
  * 
- * <strong>技術選型</strong>：使用 Jackson 處理事件的 JSON 序列化，並透過 JPA 寫入關聯式資料庫。 利用
- * {@link DomainEventRegistry} 動態對應字串的 EventType 與實體的 Class， 解決反序列化時的型別抹除問題。
- * </p>
+ * <strong>技術選型</strong>：使用 Jackson 處理事件的 JSON 序列化，並透過 JPA 寫入關聯式資料庫。 
+ * 利用 {@link DomainEventRegistry} 動態對應字串的 EventType 與實體的 Class，解決反序列化時的型別抹除問題。
+ * </pre>
  */
 @Component
 @RequiredArgsConstructor
@@ -36,7 +36,7 @@ class EventStorerAdapter implements EventStorerPort {
 	private final EventStorePersistence eventStorePersistence;
 	private final ObjectMapper objectMapper;
 	private final DomainEventRegistry registry;
-	private final SnapshotPersistence snapshotPersistence; // 🌟 注入快照 Repo
+	private final SnapshotPersistence snapshotPersistence; // 注入快照 Repo
 
 	@Override
 	public void append(DomainEvent event) {

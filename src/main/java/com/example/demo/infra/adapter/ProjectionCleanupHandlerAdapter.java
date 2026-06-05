@@ -12,8 +12,7 @@ import lombok.extern.slf4j.Slf4j;
  * Projection Cleanup Handler Adapter (Infrastructure Layer)
  *
  * <pre>
- * 負責物理清空讀取端視圖與相關防護表的具體實作。 極具破壞性的操作，主要用於「全域事件重播 (Global System
- * Replay)」前的系統淨化作業。
+ * 負責物理清空讀取端視圖與相關防護表的具體實作。 極具破壞性的操作，主要用於「全域事件重播 (Global System Replay)」前的系統淨化作業。
  * </pre>
  */
 @Slf4j
@@ -25,7 +24,7 @@ class ProjectionCleanupHandlerAdapter implements ProjectionCleanupHandlerPort {
 
 	@Override
 	public void truncateReadModels() {
-		log.warn("🚨 Executing TRUNCATE on all read model tables...");
+		log.warn("Executing TRUNCATE on all read model tables...");
 
 		// 實務提醒：不同的資料庫對於 TRUNCATE 遇到 Foreign Key 時的行為不同。
 		// 如果是 PostgreSQL，可能需要加 CASCADE (如: TRUNCATE TABLE department_views CASCADE)
@@ -41,6 +40,6 @@ class ProjectionCleanupHandlerAdapter implements ProjectionCleanupHandlerPort {
 		// 導致所有的歷史事件都被當作「重複處理」而全數忽略，造成 Read Model 永遠是空的。
 		jdbcTemplate.execute("TRUNCATE TABLE processed_events");
 
-		log.warn("✅ All read model tables and idempotency states have been successfully truncated.");
+		log.warn("All read model tables and idempotency states have been successfully truncated.");
 	}
 }

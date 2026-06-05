@@ -23,9 +23,10 @@ public interface DepartmentTreeReaderPort {
 	 *
 	 * @param tenantId         租戶識別碼
 	 * @param rootDepartmentId 起始樹根的部門唯一識別碼
+	 * @param includeDisabled  是否包含狀態為 DISABLED 的節點
 	 * @return 經由樹狀深度 (Depth) 升序與排序權重 (SortOrder) 複合排列後的扁平化節點列表
 	 */
-	List<DepartmentNode> getSubtree(String tenantId, String rootDepartmentId);
+	List<DepartmentNode> getSubtree(String tenantId, String rootId, boolean includeDisabled);
 
 	/**
 	 * 取得特定部門的完整麵包屑路徑 (由下向上追溯所有直系祖先)。

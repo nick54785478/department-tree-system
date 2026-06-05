@@ -24,9 +24,7 @@ import lombok.NoArgsConstructor;
  * 
  * <p>歷史真理防護原則</p>：
  * 
- * 本表代表系統中「不可變 (Immutable)」的絕對真相履歷。本實體映射的所有欄位皆宣告為 {@code
- * updatable = false
- * }。
+ * 本表代表系統中「不可變 (Immutable)」的絕對真相履歷。本實體映射的所有欄位皆宣告為 updatable = false。
  * 在架構約定上，本表<p>絕對禁止執行任何 UPDATE 或 DELETE 操作</p>，只能進行 Append-Only (純附加) 寫入。
  * 這是時光機回溯、災難審計與唯讀端投影重建 (Global Event Replay) 的真相來源。
  * </pre>

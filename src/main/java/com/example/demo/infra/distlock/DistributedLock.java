@@ -50,8 +50,10 @@ public class DistributedLock {
 	/**
 	 * 鎖的租約自動過期截止時間。
 	 * 
-	 * 死鎖防禦網：當某台伺服器成功搶鎖後意外遭遇 OOM 崩潰、重啟或網路斷線，導致未能執行 finally 釋放鎖時， 其他健康節點可以透過
-	 * {@code WHERE expires_at < NOW()} 判斷其過期，並安全地接管該鎖，徹底杜絕全系統死鎖 (Deadlock)。
+	 * <pre>
+	 * 死鎖防禦網：當某台伺服器成功搶鎖後意外遭遇 OOM 崩潰、重啟或網路斷線，導致未能執行 finally 釋放鎖時， 
+	 * 其他健康節點可以透過 WHERE expires_at < NOW() 判斷其過期，並安全地接管該鎖，徹底杜絕全系統死鎖 (Deadlock)。
+	 * </pre>
 	 */
 	@Column(name = "expires_at")
 	private Instant expiresAt;
