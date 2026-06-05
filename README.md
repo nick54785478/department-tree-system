@@ -33,6 +33,35 @@
 >* 人員編制大遷徙 (Mass Employee Transfer)： 利用 Event Replay 瞬間鎖定轉移名單，無須依賴低效的關聯表雙寫。
 >* 時光機還原 (Undelete & Restore)： 支援從邏輯刪除狀態中滿血復活，並包含自動回歸頂層 Root 的拓撲防禦機制，防止產生幽靈孤兒節點。
 
+## 系統目錄結構 (Hexagonal View)
+  ```
+    src/main/java/com/example/demo/
+    ├── application/             # Application Layer (Hexagon Inside)
+    │   ├── service/             # Process Managers & Orchestrators (e.g., DepartmentRestructureCommandService)
+    │   ├── port/                # Ports
+    │   ├── domain/                  # Domain Layer (Hexagon Center)
+    │   │   ├── Department.java      # Aggregate Root
+    │   │   ├── event/               # Domain Events (e.g., DepartmentMergedEvent)
+    │   │   ├── exception/           # Domain Exceptions
+    │   │   ├── repository/          # Domain Repository (e.g., DepartmentRepository)
+    │   │   └── vo/                  # Value Objects (TenantId, DepartmentId)
+    │   └── shared/
+    │       ├── command/        # Commands
+    │       ├── dto/            # Dto
+    │       └── view/           # Views
+    ├── infrastructure/          # Infrastructure Layer
+    │   ├── adapter/             # The implement of Ports
+    │   ├── projection/          # Query Side Projection 
+    │   └── persistence/         # JPA Entities, Repositories, and DB Adapters
+    └── iface/            # Presentation Layer
+        ├── dto/           # Dto (e.g Request, Response)
+        ├── rest/          # RESTful Command/Query Endpoints
+        ├── schedule/      # Schedule Job
+        ├── exception/     # Exception Handler
+        └── event/         # Event Handler
+  ```   
+
+
 ## 技術堆疊 (Tech Stack)
 >* Language: Java 17 / 21
 >* Framework: Spring Boot 4.0.6
