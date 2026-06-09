@@ -1,6 +1,13 @@
 package com.example.demo.infra.adapter;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -112,10 +119,79 @@ class DepartmentTreeReaderAdapter implements DepartmentTreeReaderPort {
 
 	/**
 	 * 提取共用的 RowMapper 邏輯，保持程式碼 DRY (Don't Repeat Yourself)
+	 * 
+	 * @param rs 每一列的 SQL 查詢結果集
+	 * @return 轉換後的 Java DTO (DepartmentNode)
 	 */
-	private DepartmentNode mapRowToNode(java.sql.ResultSet rs) throws java.sql.SQLException {
-		return new DepartmentNode(rs.getString("tenant_id"), rs.getString("id"), rs.getString("parent_id"),
-				rs.getString("code"), rs.getString("name"), rs.getString("status"), rs.getInt("sort_order"),
+	private DepartmentNode mapRowToNode(ResultSet rs) throws SQLException {
+		return new DepartmentNode(rs.getString("tenant_id"), // 從 SQL 欄位 tenant_id 拿出字串
+				rs.getString("id"), rs.getString("parent_id"), rs.getString("code"), rs.getString("name"),
+				rs.getString("status"), rs.getInt("sort_order"), // 從 SQL 欄位拿出整數
 				rs.getInt("depth"), rs.getInt("direct_headcount"), rs.getInt("total_headcount"));
+	}
+
+	@Override
+	public Optional<DepartmentNode> findById(String tenantId, String id) {
+		String sql = """
+				SELECT
+				    v.tenant_id, v.id, v.parent_id, v.code, v.name, v.status, v.sort_order,
+				    v.direct_headcount, v.total_headcount, 0 as depth
+				FROM department_views v
+				WHERE v.tenant_id = :tenantId
+				  AND v.id = :id
+				  AND v.status != 'DELETED'
+				""";
+
+		MapSqlParameterSource params = new MapSqlParameterSource().addValue("tenantId", tenantId).addValue("id", id);
+
+		List<DepartmentNode> result = jdbcTemplate.query(sql, params, (rs, rowNum) -> mapRowToNode(rs));
+		return result.stream().findFirst();
+	}
+
+	@Override
+	public List<DepartmentNode> findDirectChildren(String tenantId, String parentId) {
+		String sql = """
+				SELECT
+				    v.tenant_id, v.id, v.parent_id, v.code, v.name, v.status, v.sort_order,
+				    v.direct_headcount, v.total_headcount, 1 as depth
+				FROM department_views v
+				WHERE v.tenant_id = :tenantId
+				  AND v.parent_id = :parentId
+				  AND v.status != 'DELETED'
+				ORDER BY v.sort_order ASC
+				""";
+
+		MapSqlParameterSource params = new MapSqlParameterSource().addValue("tenantId", tenantId).addValue("parentId",
+				parentId);
+
+		return jdbcTemplate.query(sql, params, (rs, rowNum) -> mapRowToNode(rs));
+	}
+
+	@Override
+	public Map<String, List<String>> findEmployeeMappings(String tenantId, List<String> departmentIds) {
+		if (departmentIds == null || departmentIds.isEmpty()) {
+			return Collections.emptyMap();
+		}
+
+		// 🌟 命中 idx_view_tenant_department 複合索引，極速批次拉取！
+		String sql = """
+				SELECT department_id, employee_id
+				FROM department_employees_view
+				WHERE tenant_id = :tenantId
+				  AND department_id IN (:deptIds)
+				ORDER BY assigned_at ASC
+				""";
+
+		MapSqlParameterSource params = new MapSqlParameterSource().addValue("tenantId", tenantId).addValue("deptIds",
+				departmentIds);
+
+		return jdbcTemplate.query(sql, params, rs -> {
+			Map<String, List<String>> map = new HashMap<>();
+			while (rs.next()) {
+				map.computeIfAbsent(rs.getString("department_id"), k -> new ArrayList<>())
+						.add(rs.getString("employee_id"));
+			}
+			return map;
+		});
 	}
 }

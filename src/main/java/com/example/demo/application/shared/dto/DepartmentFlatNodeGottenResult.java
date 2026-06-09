@@ -1,4 +1,4 @@
-package com.example.demo.application.shared.view;
+package com.example.demo.application.shared.dto;
 
 /**
  * Department Flat Node Gotten View (讀取端 - 扁平化單一節點視圖)
@@ -24,6 +24,6 @@ package com.example.demo.application.shared.view;
  * @param sortOrder 排序權重
  * @param depth     節點絕對深度 (特別用於麵包屑組件中，讓前端能依此數值進行正確的由左至右順序排列)
  */
-public record DepartmentFlatNodeGottenView(String tenantId, String id, String parentId, String code, String name,
+public record DepartmentFlatNodeGottenResult(String tenantId, String id, String parentId, String code, String name,
 		String status, int sortOrder, int depth) {
 }

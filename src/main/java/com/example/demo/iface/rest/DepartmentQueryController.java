@@ -5,11 +5,14 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.application.service.DepartmentQueryService;
+import com.example.demo.application.shared.dto.DepartmentHierarchyGottenResult;
+import com.example.demo.iface.dto.res.DepartmentHierarchyGottenResource;
 import com.example.demo.iface.dto.res.DepartmentsSearchedResource;
 import com.example.demo.iface.dto.res.FlatDepartmentsGottenResource;
 import com.example.demo.infra.shared.dto.DepartmentFlatNodeGottenView;
@@ -101,5 +104,19 @@ public class DepartmentQueryController {
 			@RequestParam String keyword) {
 		List<DepartmentFlatNodeGottenView> data = queryService.searchDepartments(tenantId, keyword);
 		return ResponseEntity.ok(new DepartmentsSearchedResource("200", "Success", data));
+	}
+
+	/**
+	 * 4. 取得特定部門的上下層階層關係與人員編制脈絡 (主管與下屬架構)
+	 *
+	 * @param tenantId     多租戶識別碼 (Header 注入)
+	 * @param departmentId 目標查詢的部門 ID (Path Variable)
+	 */
+	@GetMapping("/{departmentId}/hierarchy")
+	public ResponseEntity<DepartmentHierarchyGottenResource> getDepartmentHierarchy(
+			@RequestHeader("X-Tenant-ID") String tenantId, @PathVariable String departmentId) {
+
+		DepartmentHierarchyGottenResult hierarchy = queryService.getDepartmentHierarchy(tenantId, departmentId);
+		return ResponseEntity.ok(new DepartmentHierarchyGottenResource("200", "Success", hierarchy));
 	}
 }

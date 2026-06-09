@@ -1,6 +1,8 @@
 package com.example.demo.application.port;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import com.example.demo.infra.shared.dto.DepartmentNode;
 
@@ -48,4 +50,27 @@ public interface DepartmentTreeReaderPort {
 	 * @return 符合條件的部門節點基本資訊列表 (此列表為資料打平狀態，不包含樹狀深度等結構欄位)
 	 */
 	List<DepartmentNode> searchDepartments(String tenantId, String keyword);
+
+	/**
+	 * 根據 ID 查詢單一部門基本視圖。
+	 */
+	Optional<DepartmentNode> findById(String tenantId, String id);
+
+	/**
+	 * 查詢特定部門的「直屬」子部門列表 (僅限下一層)。
+	 */
+	List<DepartmentNode> findDirectChildren(String tenantId, String parentId);
+
+	/**
+	 * 🌟 高效能批次關聯查詢：獲取一組部門的員工映射表。
+	 * <p>
+	 * 直擊 department_employees_view 投影表，利用複合索引優化提供高速回傳。
+	 * </p>
+	 *
+	 * @param tenantId      租戶識別碼
+	 * @param departmentIds 欲查詢的部門 ID 列表
+	 * @return 鍵為部門 ID，值為員工 ID 清單的 Map 結構
+	 */
+	Map<String, List<String>> findEmployeeMappings(String tenantId, List<String> departmentIds);
+
 }

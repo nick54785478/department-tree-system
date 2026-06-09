@@ -1,4 +1,4 @@
-package com.example.demo.application.shared.view;
+package com.example.demo.application.shared.dto;
 
 import java.util.List;
 
@@ -30,7 +30,7 @@ import com.example.demo.infra.shared.dto.DepartmentNode;
  * @param totalHeadcount  總人數 (向上滾動加總後的總兵力，包含此部門自身以及轄下所有子孫部門的人數總和)
  * @param children        子部門視圖清單 (前端接收後以此屬性進行遞迴組件渲染，保證為 non-null 清單)
  */
-public record DepartmentTreeNodeGottenView(String tenantId, String id, String parentId, String code, String name,
+public record DepartmentTreeNodeGottenResult(String tenantId, String id, String parentId, String code, String name,
 		String status, int sortOrder, int depth, int directHeadcount, int totalHeadcount,
-		List<DepartmentTreeNodeGottenView> children) {
+		List<DepartmentTreeNodeGottenResult> children) {
 }

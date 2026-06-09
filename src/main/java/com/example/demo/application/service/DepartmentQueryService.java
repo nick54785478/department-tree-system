@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.application.port.DepartmentTreeReaderPort;
+import com.example.demo.application.shared.dto.DepartmentHierarchyGottenResult;
 import com.example.demo.infra.shared.dto.DepartmentFlatNodeGottenView;
 import com.example.demo.infra.shared.dto.DepartmentNode;
 import com.example.demo.infra.shared.dto.DepartmentTreeNodeGottenView;
@@ -75,6 +76,95 @@ public class DepartmentQueryService {
 
 		// 4. 啟動由下而上的遞迴組裝引擎
 		return buildNodeRecursively(rootDto, childrenGroupMap);
+	}
+
+	/**
+	 * 取得特定部門的上下層組織樹狀關係與人員分派脈絡 (升閱巢狀下屬版)。
+	 */
+	public DepartmentHierarchyGottenResult getDepartmentHierarchy(String tenantId, String departmentId) {
+
+		// 1. 查出當前部門節點的基礎資訊
+		DepartmentNode currentNode = departmentQueryPort.findById(tenantId, departmentId)
+				.orElseThrow(() -> new IllegalArgumentException("Target department not found: " + departmentId));
+
+		// 2. 🌟 頂級優化：利用閉包表單次 SQL 撈出該部門轄下的「整批子孫節點」
+		// 這裡 includeDisabled 傳入 true，確保即使子樹包含 DISABLED 節點也能完整還原幾何拓撲
+		List<DepartmentNode> descendantNodes = departmentQueryPort.getSubtree(tenantId, departmentId, true);
+
+		// 3. 獲取上級部門資訊 (父節點脈絡)
+		DepartmentNode parentNode = null;
+		if (currentNode.parentId() != null) {
+			parentNode = departmentQueryPort.findById(tenantId, currentNode.parentId()).orElse(null);
+		}
+
+		// =========================================================
+		// 4. 🚀 批次收集所有相關部門 ID，發動單次大批量反查，消滅 N+1
+		// =========================================================
+		List<String> allTargetDeptIds = new ArrayList<>();
+		if (parentNode != null) {
+			allTargetDeptIds.add(parentNode.id());
+		}
+		// 將當前部門以及所有子孫部門的 ID 全部塞入批次清單
+		descendantNodes.forEach(d -> allTargetDeptIds.add(d.id()));
+
+		// 直擊 department_employees_view 複合索引，一次拉回整張對應表
+		Map<String, List<String>> staffMapping = departmentQueryPort.findEmployeeMappings(tenantId, allTargetDeptIds);
+
+		// =========================================================
+		// 5. 函數式構建與記憶體關係重組 (Adjacency List 分組)
+		// =========================================================
+
+		// 將所有子孫節點依照 parentId 分組，方便在記憶體中進行 O(1) 的遞迴拓撲尋找
+		Map<String, List<DepartmentNode>> childrenGroupMap = descendantNodes.stream()
+				.filter(n -> !n.id().equals(departmentId)) // 排除當前部門自己，只留下真正的子孫
+				.filter(n -> n.parentId() != null).collect(Collectors.groupingBy(DepartmentNode::parentId));
+
+		// A. 組裝當前本級
+		var currentSummary = new DepartmentHierarchyGottenResult.DepartmentSummaryResource(currentNode.id(),
+				currentNode.code(), currentNode.name(), currentNode.status());
+		List<String> currentStaff = staffMapping.getOrDefault(departmentId, List.of());
+
+		// B. 組裝上級主管脈絡
+		DepartmentHierarchyGottenResult.DepartmentSummaryResource parentSummary = null;
+		List<String> parentStaff = List.of();
+		if (parentNode != null) {
+			parentSummary = new DepartmentHierarchyGottenResult.DepartmentSummaryResource(parentNode.id(),
+					parentNode.code(), parentNode.name(), parentNode.status());
+			parentStaff = staffMapping.getOrDefault(parentNode.id(), List.of());
+		}
+
+		// C. 🌟 啟動由上而下的子樹遞迴組裝引擎 (從當前部門的直屬下一層開始建立)
+		List<DepartmentHierarchyGottenResult.ChildDepartmentNodeResource> childrenNodes = buildChildNodesRecursively(
+				departmentId, childrenGroupMap, staffMapping);
+
+		return new DepartmentHierarchyGottenResult(currentSummary, currentStaff, parentSummary, parentStaff, childrenNodes);
+	}
+
+	/**
+	 * 🌟 內部私有輔助遞迴：函數式構建巢狀下屬部門與人員
+	 */
+	private List<DepartmentHierarchyGottenResult.ChildDepartmentNodeResource> buildChildNodesRecursively(String parentId,
+			Map<String, List<DepartmentNode>> childrenGroupMap, Map<String, List<String>> staffMapping) {
+
+		// 取得隸屬於此父 ID 的直屬子節點 DTOs
+		List<DepartmentNode> childDtos = childrenGroupMap.getOrDefault(parentId, Collections.emptyList());
+
+		// 排序：確保同層級兄弟節點依 sortOrder 升序排列
+		List<DepartmentNode> sortedChildDtos = new ArrayList<>(childDtos);
+		sortedChildDtos.sort(Comparator.comparingInt(DepartmentNode::sortOrder));
+
+		// 遞迴轉換為巢狀 View
+		return sortedChildDtos.stream().map(node -> {
+			var summary = new DepartmentHierarchyGottenResult.DepartmentSummaryResource(node.id(), node.code(), node.name(),
+					node.status());
+			List<String> staff = staffMapping.getOrDefault(node.id(), List.of());
+
+			// 深度優先 (DFS) 下鑽：請子節點繼續往下尋找它的子樹結構
+			List<DepartmentHierarchyGottenResult.ChildDepartmentNodeResource> subChildren = buildChildNodesRecursively(
+					node.id(), childrenGroupMap, staffMapping);
+
+			return new DepartmentHierarchyGottenResult.ChildDepartmentNodeResource(summary, staff, subChildren);
+		}).toList();
 	}
 
 	// =========================================================
@@ -176,4 +266,5 @@ public class DepartmentQueryService {
 				Collections.unmodifiableList(childrenViews) // 封裝防禦，避免外層代碼篡改子節點清單
 		);
 	}
+
 }
